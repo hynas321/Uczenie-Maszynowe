@@ -17,10 +17,5 @@ movie_ids = [389, 62]
 
 #Sample movie details fetching
 for movie_id in movie_ids:
-    details = tmdb_api_service.fetch_movie_details(movie_id)
-    print(f"Title: {details.title}")
-    print(f"Release Date: {details.release_date}")
-    print(f"Runtime: {details.runtime} minutes")
-    print(f"Genres: {', '.join([genre['name'] for genre in details.genres])}")
-    print(f"Rating: {details.vote_average}/10")
-    print("-" * 40)
+    movie_details = tmdb_api_service.fetch_movie_details(movie_id)
+    print(movie_details)
