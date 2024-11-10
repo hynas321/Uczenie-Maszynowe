@@ -1,21 +1,24 @@
-import pandas as pd
 import os
 
 from dotenv import load_dotenv
-from tmdb_api_service import TmdbApiService
 
-movie_data = pd.read_csv('movie/movie.csv', delimiter=';', index_col=0, usecols=[0, 1, 2], names=["movie_id", "tmbd_movie_id", "title"])
-task_data = pd.read_csv('movie/task.csv', delimiter=';', index_col=0, usecols=[0, 1, 2, 3], names=["index", "user_id", "movie_id", "rating"])
-train_data = pd.read_csv('movie/train.csv', delimiter=';', index_col=0, usecols=[0, 1, 2, 3], names=["index", "user_id", "movie_id", "rating"])
+from services.tmdb_api_service import TmdbApiService
+from utils.csv_functions import load_csv_data, load_or_fetch_movie_features, save_predictions_to_csv
+from utils.feature_functions import create_feature_vectors
+from utils.prediction_functions import predict_ratings
 
-load_dotenv()
+def main():
+    load_dotenv()
+    api_key = os.getenv('TMDB_API_KEY')
 
-api_key = os.getenv('TMDB_API_KEY')
-tmdb_api_service = TmdbApiService(api_key)
+    movie_data_df, task_data_df, train_data_df = load_csv_data()
+    tmdb_api_service = TmdbApiService(api_key)
+    movie_id_tmdb_ids = movie_data_df['tmdb_movie_id'].to_dict()
 
-movie_ids = [389, 62]
+    movie_features_dict = load_or_fetch_movie_features(movie_id_tmdb_ids, tmdb_api_service)
+    movie_feature_vectors, genre_id_to_index = create_feature_vectors(movie_features_dict)
+    predictions = predict_ratings(train_data_df, task_data_df, movie_feature_vectors)
+    save_predictions_to_csv(task_data_df, predictions, train_data_df)
 
-#Sample movie details fetching
-for movie_id in movie_ids:
-    movie_details = tmdb_api_service.fetch_movie_details(movie_id)
-    print(movie_details)
+if __name__ == "__main__":
+    main()
