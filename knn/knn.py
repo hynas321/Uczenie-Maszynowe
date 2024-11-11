@@ -1,13 +1,14 @@
 import numpy as np
 
-from utils.similarity_functions import cosine_similarity
+from utils.similarity_functions import compute_similarity
 
 class KNN:
-    def __init__(self, k=5, similarity_function=cosine_similarity):
+    def __init__(self, feature_types, k=5, similarity_function=compute_similarity):
         self.k = k
         self.similarity_function = similarity_function
         self.features = None
         self.labels = None
+        self.feature_types = feature_types
 
     def fit(self, features, labels):
         self.features = features
@@ -20,7 +21,7 @@ class KNN:
         similarities = []
         for idx in range(len(self.features)):
             feature_vector = self.features[idx]
-            similarity = self.similarity_function(task_vector, feature_vector)
+            similarity = self.similarity_function(task_vector, feature_vector, self.feature_types)
             similarities.append((similarity, idx))
 
         similarities.sort(reverse=True, key=lambda x: x[0])
@@ -37,6 +38,7 @@ class KNN:
             return int(round(np.mean(self.labels)))
 
         predicted_label = numerator / denominator
+
         return max(0, min(5, int(round(predicted_label))))
 
     def predict_batch(self, task_vectors):

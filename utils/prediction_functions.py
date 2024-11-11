@@ -3,9 +3,9 @@ from collections import defaultdict
 import numpy as np
 from tqdm import tqdm
 
+from class_models.movie_features import MovieFeatures
 from knn.knn import KNN
-from utils.similarity_functions import cosine_similarity
-
+from utils.similarity_functions import compute_similarity
 
 def predict_ratings(train_data_df, task_data_df, movie_feature_vectors):
     user_ratings = defaultdict(list)
@@ -17,12 +17,12 @@ def predict_ratings(train_data_df, task_data_df, movie_feature_vectors):
 
     predictions = {}
 
-    for idx, row in tqdm(task_data_df.iterrows(), total=task_data_df.shape[0], desc="Predicting ratings"):
+    for i, row in tqdm(task_data_df.iterrows(), total=task_data_df.shape[0], desc="Predicting ratings"):
         user_id = row['user_id']
         movie_id = row['movie_id']
 
         if movie_id not in movie_feature_vectors:
-            predictions[idx] = 3
+            predictions[i] = 3
             continue
 
         task_vector = movie_feature_vectors[movie_id]
@@ -37,13 +37,13 @@ def predict_ratings(train_data_df, task_data_df, movie_feature_vectors):
                     y_train.append(rating)
 
             if X_train:
-                knn = KNN(k=5, similarity_function=cosine_similarity)
+                knn = KNN(feature_types=MovieFeatures.feature_types(), k=5, similarity_function=compute_similarity)
                 knn.fit(X_train, y_train)
                 predicted_rating = knn.predict(task_vector)
-                predictions[idx] = predicted_rating
+                predictions[i] = predicted_rating
             else:
-                predictions[idx] = int(round(np.mean(train_data_df['rating'])))
+                predictions[i] = int(round(np.mean(train_data_df['rating'])))
         else:
-            predictions[idx] = int(round(np.mean(train_data_df['rating'])))
+            predictions[i] = int(round(np.mean(train_data_df['rating'])))
 
     return predictions

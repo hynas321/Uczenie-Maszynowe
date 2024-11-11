@@ -1,6 +1,6 @@
 from tmdbv3api import TMDb, Movie
 
-from entities.movie_features import MovieFeatures
+from class_models.movie_features import MovieFeatures
 
 class TmdbApiService:
     def __init__(self, tmdb_api_key: str):
@@ -13,9 +13,10 @@ class TmdbApiService:
 
         return MovieFeatures(
             release_date=movie_details.release_date,
-            genres=[genre['id'] for genre in movie_details.genres],
             runtime=movie_details.runtime,
             budget=movie_details.budget,
             revenue=movie_details.revenue,
-            popularity=movie_details.popularity
+            popularity=movie_details.popularity,
+            vote_average=movie_details.vote_average,
+            genres=[genre['id'] for genre in movie_details.genres],
         )

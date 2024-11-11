@@ -7,7 +7,6 @@ from tqdm import tqdm
 
 from services.tmdb_api_service import TmdbApiService
 
-
 def load_csv_data() -> tuple[DataFrame, DataFrame, DataFrame]:
     movie_data_df = pd.read_csv('csv_files/movie.csv', delimiter=';', index_col=0,
                                 usecols=[0, 1, 2], names=["movie_id", "tmdb_movie_id", "title"])
@@ -20,12 +19,12 @@ def load_csv_data() -> tuple[DataFrame, DataFrame, DataFrame]:
 
 def load_or_fetch_movie_features(movie_id_tmdb_ids: Dict[int, int], tmdb_api_service: TmdbApiService):
     try:
-        with open('../movie_features.pkl', 'rb') as f:
+        with open('movie_features.pkl', 'rb') as f:
             movie_features_dict = pickle.load(f)
             print("Loaded movie features from 'movie_features.pkl'")
             return movie_features_dict
     except (FileNotFoundError, ModuleNotFoundError):
-        print("'movie_features.pkl' not found. Fetching movie features...")
+        print("\n'movie_features.pkl' not found. Fetching movie features...")
         movie_features_dict = {}
 
     for movie_id, tmdb_id in tqdm(movie_id_tmdb_ids.items(), desc="Fetching movie features", unit="movie"):
@@ -37,7 +36,7 @@ def load_or_fetch_movie_features(movie_id_tmdb_ids: Dict[int, int], tmdb_api_ser
                 print(f"Could not fetch features of the TMDB movie {tmdb_id}: {e}")
                 return None
 
-    with open('../movie_features.pkl', 'wb') as f:
+    with open('movie_features.pkl', 'wb') as f:
         pickle.dump(movie_features_dict, f)
         print("Movie features have been saved to 'movie_features.pkl'")
 
