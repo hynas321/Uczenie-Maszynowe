@@ -1,10 +1,12 @@
 from typing import List, Tuple, Dict, Union, Optional
 
 import numpy as np
-from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 from datetime import datetime
 from class_models.movie_feature_type import MovieFeatureType
 from class_models.movie_features import MovieFeatures
+from knn.label_encoder import LabelEncoder
+from knn.min_max_scaler import MinMaxScaler
+
 
 def create_feature_vectors(movie_features_dict: Dict[int, MovieFeatures],
                            feature_types: List[Tuple[str, MovieFeatureType]]) -> Dict[int, np.ndarray]:
@@ -30,7 +32,7 @@ def create_feature_vectors(movie_features_dict: Dict[int, MovieFeatures],
         features.append(feature_vector)
 
     scaler = MinMaxScaler()
-    numerical_features = scaler.fit_transform([f[:-1] for f in features])
+    numerical_features = scaler.fit_transform(np.array([f[:-1] for f in features]))
     combined_features = np.column_stack((numerical_features, [f[-1] for f in features]))
 
     movie_feature_vectors: Dict[int, np.ndarray] = {movie_id: combined_features[i] for i, movie_id in enumerate(movie_ids)}
