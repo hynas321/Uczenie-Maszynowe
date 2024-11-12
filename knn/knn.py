@@ -3,11 +3,12 @@ from typing import List, Tuple, Any, Optional
 import numpy as np
 
 from class_models.movie_feature_type import MovieFeatureType
+from utils.similarity_functions import compute_similarity
 
 
 class KNN:
     def __init__(self, feature_types: List[Tuple[str, MovieFeatureType]], k: int = 5,
-                 similarity_function: Any = None) -> None:
+                 similarity_function = compute_similarity) -> None:
         self.k: int = k
         self.similarity_function: Any = similarity_function
         self.features: Optional[List[np.ndarray]] = None

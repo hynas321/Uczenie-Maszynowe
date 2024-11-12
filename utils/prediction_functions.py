@@ -7,7 +7,6 @@ from tqdm import tqdm
 
 from class_models.movie_features import MovieFeatures
 from knn.knn import KNN
-from utils.similarity_functions import compute_similarity
 
 def predict_ratings(train_data_df: DataFrame, task_data_df: DataFrame,
                     movie_feature_vectors: Dict[int, np.ndarray]) -> dict[Hashable, int | Any]:
@@ -40,7 +39,7 @@ def predict_ratings(train_data_df: DataFrame, task_data_df: DataFrame,
                     y_train.append(rating)
 
             if X_train:
-                knn = KNN(feature_types=MovieFeatures.feature_types(), k=5, similarity_function=compute_similarity)
+                knn = KNN(feature_types=MovieFeatures.feature_types(), k=5)
                 knn.fit(X_train, y_train)
                 predicted_rating = knn.predict(task_vector)
                 predictions[i] = predicted_rating

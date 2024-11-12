@@ -6,7 +6,6 @@ from datetime import datetime
 from class_models.movie_feature_type import MovieFeatureType
 from class_models.movie_features import MovieFeatures
 
-
 def create_feature_vectors(movie_features_dict: Dict[int, MovieFeatures],
                            feature_types: List[Tuple[str, MovieFeatureType]]) -> Dict[int, np.ndarray]:
     movie_ids: List[int] = list(movie_features_dict.keys())
@@ -46,9 +45,14 @@ def _process_numerical_feature(feature_name: str, value: Optional[str]) -> Union
 
 def _label_encode_genres(movie_features_dict: Dict[int, MovieFeatures]) -> Tuple[Dict[int, int], LabelEncoder]:
     genre_combinations = [';'.join(map(str, features.genres)) for features in movie_features_dict.values()]
+    unique_genre_combinations = list(set(genre_combinations))
+
     label_encoder = LabelEncoder()
-    genre_labels = label_encoder.fit_transform(genre_combinations)
-    genre_label_dict: Dict[int, int] = {movie_id: label for movie_id, label in zip(movie_features_dict.keys(), genre_labels)}
+    label_encoder.fit(unique_genre_combinations)
+
+    genre_label_dict: Dict[int, int] = {
+        movie_id: label_encoder.transform([';'.join(map(str, features.genres))])[0]
+        for movie_id, features in movie_features_dict.items()
+    }
 
     return genre_label_dict, label_encoder
-
