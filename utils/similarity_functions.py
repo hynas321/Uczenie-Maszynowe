@@ -18,6 +18,7 @@ def compute_similarity(a, b, feature_types):
         else:
             similarity = 0
         similarities.append(similarity)
+
     return sum(similarities) / len(similarities)
 
 def cosine_similarity(a, b):
@@ -26,4 +27,5 @@ def cosine_similarity(a, b):
     norm_b = np.linalg.norm(b)
     if norm_a == 0 or norm_b == 0:
         return 0
+
     return dot_product / (norm_a * norm_b)

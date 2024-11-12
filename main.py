@@ -17,7 +17,7 @@ def main():
     movie_id_tmdb_ids = movie_data_df['tmdb_movie_id'].to_dict()
 
     movie_features_dict = load_or_fetch_movie_features(movie_id_tmdb_ids, tmdb_api_service)
-    movie_feature_vectors, genre_id_to_index = create_feature_vectors(movie_features_dict, MovieFeatures.feature_types())
+    movie_feature_vectors = create_feature_vectors(movie_features_dict, MovieFeatures.feature_types())
     predictions = predict_ratings(train_data_df, task_data_df, movie_feature_vectors)
     save_predictions_to_csv(task_data_df, predictions, train_data_df)
 

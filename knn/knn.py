@@ -19,18 +19,18 @@ class KNN:
             raise ValueError("The model has not been fitted yet. Call 'fit' with training data.")
 
         similarities = []
-        for idx in range(len(self.features)):
-            feature_vector = self.features[idx]
+        for i in range(len(self.features)):
+            feature_vector = self.features[i]
             similarity = self.similarity_function(task_vector, feature_vector, self.feature_types)
-            similarities.append((similarity, idx))
+            similarities.append((similarity, i))
 
         similarities.sort(reverse=True, key=lambda x: x[0])
         top_k = similarities[:self.k]
 
         numerator = 0.0
         denominator = 0.0
-        for similarity, idx in top_k:
-            label = self.labels[idx]
+        for similarity, i in top_k:
+            label = self.labels[i]
             numerator += similarity * label
             denominator += similarity
 
@@ -39,11 +39,4 @@ class KNN:
 
         predicted_label = numerator / denominator
 
-        return max(0, min(5, int(round(predicted_label))))
-
-    def predict_batch(self, task_vectors):
-        predictions = []
-        for task_vector in task_vectors:
-            prediction = self.predict(task_vector)
-            predictions.append(prediction)
-        return predictions
+        return np.clip(int(round(predicted_label)), 0, 5)
