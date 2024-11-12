@@ -3,7 +3,7 @@ from tmdbv3api import TMDb, Movie
 from class_models.movie_features import MovieFeatures
 
 class TmdbApiService:
-    def __init__(self, tmdb_api_key: str):
+    def __init__(self, tmdb_api_key: str) -> None:
         self.tmdb = TMDb()
         self.tmdb.api_key = tmdb_api_key
         self.movie = Movie()
@@ -18,5 +18,6 @@ class TmdbApiService:
             revenue=movie_details.revenue,
             popularity=movie_details.popularity,
             vote_average=movie_details.vote_average,
+            vote_count=movie_details.vote_count,
             genres=[genre['id'] for genre in movie_details.genres],
         )
