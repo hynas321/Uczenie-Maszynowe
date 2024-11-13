@@ -1,6 +1,8 @@
+import csv
 import pickle
-from typing import Dict, Tuple, Hashable, Any
+from typing import Dict, Tuple, Hashable, Any, List
 
+import numpy as np
 import pandas as pd
 from pandas import DataFrame
 from tqdm import tqdm
@@ -26,7 +28,6 @@ def load_or_fetch_movie_features(movie_id_tmdb_ids: Dict[int, int],
             print("Loaded movie features from 'movie_features.pkl'")
             return movie_features_dict
     except (FileNotFoundError, ModuleNotFoundError):
-        print("\n'movie_features.pkl' not found. Fetching movie features...")
         movie_features_dict: Dict[int, MovieFeatures] = {}
 
     for movie_id, tmdb_id in tqdm(movie_id_tmdb_ids.items(), desc="Fetching movie features", unit="movie"):
@@ -56,3 +57,16 @@ def save_predictions_to_csv(task_data_df: DataFrame, predictions: dict[Hashable,
 
     submission_df['rating'] = submission_df['rating'].astype(int).clip(0, 5)
     submission_df.to_csv('submission.csv', sep=';', index=True, header=False)
+
+def save_k_report(k_scores: Dict[int, List[float]], best_k_counts: Dict[int, int], report_filename: str) -> None:
+    with open(report_filename, 'w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(["k", "Count of Best k", "Average Accuracy"])
+
+        for k in sorted(k_scores.keys()):
+            accuracies = k_scores[k]
+            average_accuracy = np.mean(accuracies) if accuracies else 0
+            count = best_k_counts.get(k, 0)
+            writer.writerow([k, count, average_accuracy])
+
+    print(f"K value report saved to {report_filename}")

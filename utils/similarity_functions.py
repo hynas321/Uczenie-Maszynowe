@@ -1,34 +1,44 @@
-from typing import Union, List, Tuple
-
+from typing import List, Tuple
 import numpy as np
-
 from class_models.movie_feature_type import MovieFeatureType
 
-def numerical_similarity(a: float, b: float) -> Union[int, float]:
-    return 1 - abs(a - b) / (abs(a) + abs(b) + 1e-5)
+def compute_similarity(a: np.ndarray, b: np.ndarray, feature_types: List[Tuple[str, MovieFeatureType]]) -> float:
+    """
+    Computes the similarity between two feature vectors based on feature types.
+    """
+    similarities = []
+    index = 0
 
-def categorical_similarity(a: int, b: int) -> int:
-    return 1 if a == b else 0
-
-def compute_similarity(a: np.ndarray, b: np.ndarray,
-                       feature_types: List[ Tuple[str, MovieFeatureType]]) -> float:
-    similarities: List[float] = []
-    for i, (feature_name, feature_type) in enumerate(feature_types):
-        if feature_type == MovieFeatureType.NUMERICAL:
-            similarity = numerical_similarity(a[i], b[i])
-        elif feature_type == MovieFeatureType.CATEGORICAL:
-            similarity = categorical_similarity(a[i], b[i])
+    for feature_name, feature_type in feature_types:
+        if feature_type == MovieFeatureType.CATEGORICAL:
+            num_categories = len(a) - index
+            category_a = a[index:index + num_categories]
+            category_b = b[index:index + num_categories]
+            similarity = categorical_similarity(category_a, category_b)
+            similarities.append(similarity)
+            index += num_categories
+        elif feature_type == MovieFeatureType.NUMERICAL:
+            similarity = numerical_similarity(a[index], b[index])
+            similarities.append(similarity)
+            index += 1
         else:
-            similarity = 0
-        similarities.append(similarity)
+            similarities.append(0)
+            index += 1
 
     return sum(similarities) / len(similarities)
 
-def cosine_similarity(a: np.ndarray, b: np.ndarray) -> float:
-    dot_product = np.dot(a, b)
-    norm_a = np.linalg.norm(a)
-    norm_b = np.linalg.norm(b)
-    if norm_a == 0 or norm_b == 0:
-        return 0
+def categorical_similarity(a: np.ndarray, b: np.ndarray) -> float:
+    """
+    Computes the Jaccard similarity between two categorical vectors.
+    """
+    intersection = np.sum(np.minimum(a, b))
+    union = np.sum(np.maximum(a, b))
+    return intersection / union if union != 0 else 0
 
-    return dot_product / (norm_a * norm_b)
+def numerical_similarity(a: float, b: float, max_range: float = 1.0) -> float:
+    """
+    Computes the similarity between two numerical values using Euclidean distance.
+    """
+    distance = abs(a - b)
+    similarity = 1 - (distance / max_range)
+    return max(0, min(1, similarity))
