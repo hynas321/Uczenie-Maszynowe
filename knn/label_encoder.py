@@ -3,11 +3,11 @@ from typing import List
 
 class LabelEncoder:
     def __init__(self):
-        self.classes_: List[str] = []
+        self.classes: List[str] = []
 
     def fit(self, data: List[str]) -> None:
-        self.classes_ = sorted(set(data))
+        self.classes = sorted(set(data))
 
     def transform(self, data: List[str]) -> List[int]:
-        class_to_index = {cls: i for i, cls in enumerate(self.classes_)}
+        class_to_index = {element: i for i, element in enumerate(self.classes)}
         return [class_to_index[d] for d in data]

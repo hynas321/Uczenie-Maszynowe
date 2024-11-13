@@ -47,6 +47,7 @@ def load_or_fetch_movie_features(movie_id_tmdb_ids: Dict[int, int],
 def save_predictions_to_csv(task_data_df: DataFrame, predictions: dict[Hashable, int | Any],
                             train_data_df: DataFrame) -> None:
     submission_df = task_data_df.copy()
+
     for i in submission_df.index:
         if i in predictions:
             submission_df.at[i, 'rating'] = predictions[i]
@@ -54,4 +55,4 @@ def save_predictions_to_csv(task_data_df: DataFrame, predictions: dict[Hashable,
             submission_df.at[i, 'rating'] = int(round(train_data_df['rating'].mean()))
 
     submission_df['rating'] = submission_df['rating'].astype(int).clip(0, 5)
-    submission_df.to_csv('submission.csv', sep=';', index=False, header=False)
+    submission_df.to_csv('submission.csv', sep=';', index=True, header=False)

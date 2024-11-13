@@ -22,7 +22,9 @@ def main() -> None:
     movie_features_dict: Dict[int, MovieFeatures] = load_or_fetch_movie_features(movie_id_tmdb_id_dict, tmdb_api_service)
     movie_feature_vectors_dict: Dict[int, np.ndarray] = create_feature_vectors(movie_features_dict, MovieFeatures.feature_types())
 
-    predictions_dict: dict[Hashable, int | Any] = predict_ratings(train_data_df, task_data_df, movie_feature_vectors_dict)
+    k_values = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+    predictions_dict: dict[Hashable, int | Any] = predict_ratings(train_data_df, task_data_df, movie_feature_vectors_dict, k_values)
     save_predictions_to_csv(task_data_df, predictions_dict, train_data_df)
 
 if __name__ == "__main__":
