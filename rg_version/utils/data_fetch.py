@@ -40,7 +40,7 @@ def generate_data():
     tmdb_api_service = TMDBapi()
     users = []
 
-    for user_data in train_data[:5]:
+    for index, user_data in enumerate(train_data, start=1):
 
         train_movies = []
         task_movies = []
@@ -67,7 +67,7 @@ def generate_data():
         user = User(user_id, train_movies, task_movies)
         users.append(user)
 
-        print(len(train_movies), " ", len(task_movies))
+        print(f"User with index = {index}")
 
     return users
 
