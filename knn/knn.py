@@ -2,6 +2,8 @@ from typing import List, Tuple, Any, Optional
 import numpy as np
 from utils.similarity_functions import compute_similarity
 
+from collections import Counter
+
 class KNN:
     def __init__(self, feature_types: List[Tuple[str, Any]], k: int = 5,
                  similarity_function=compute_similarity) -> None:
@@ -25,13 +27,7 @@ class KNN:
         ]
 
         similarities.sort(reverse=True, key=lambda x: x[0])
-        top_k = similarities[:self.k]
+        top_k = [self.labels[i] for _, i in similarities[:self.k]]
 
-        numerator = sum(similarity * self.labels[i] for similarity, i in top_k)
-        denominator = sum(similarity for similarity, _ in top_k)
-
-        if denominator == 0:
-            return int(round(np.mean(self.labels)))
-
-        predicted_label = numerator / denominator
-        return np.clip(int(round(predicted_label)), 0, 5)
+        most_common_label = Counter(top_k).most_common(1)[0][0]
+        return np.clip(most_common_label, 0, 5)
