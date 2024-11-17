@@ -25,8 +25,7 @@ def main() -> None:
     movie_features_dict: Dict[int, MovieFeatures] = load_or_fetch_movie_features(movie_id_tmdb_id_dict, tmdb_api_service)
     movie_feature_vectors_dict: Dict[int, np.ndarray] = create_feature_vectors(movie_features_dict)
 
-    k_values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
-        25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50]
+    k_values = list(range(1, 101))
 
     predictions_dict: dict[int, int] = predict_ratings(train_data_df, task_data_df, movie_feature_vectors_dict, k_values)
     save_predictions_to_csv(task_data_df, predictions_dict, train_data_df)
