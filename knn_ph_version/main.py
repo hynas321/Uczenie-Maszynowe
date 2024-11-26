@@ -1,7 +1,7 @@
+# main.py
 import os
 from typing import Dict
 
-import numpy as np
 from dotenv import load_dotenv
 
 from class_models.movie_features import MovieFeatures
@@ -10,7 +10,7 @@ from utils.csv_functions import load_csv_data, load_or_fetch_movie_features, sav
 from utils.feature_functions import create_feature_vectors
 from utils.prediction_functions import predict_ratings
 
-def main() -> None:
+def main():
     load_dotenv()
     api_key: str | None = os.getenv('TMDB_API_KEY')
 
@@ -23,12 +23,28 @@ def main() -> None:
 
     movie_id_tmdb_id_dict: Dict[int, int] = movie_data_df['tmdb_movie_id'].to_dict()
     movie_features_dict: Dict[int, MovieFeatures] = load_or_fetch_movie_features(movie_id_tmdb_id_dict, tmdb_api_service)
-    movie_feature_vectors_dict: Dict[int, np.ndarray] = create_feature_vectors(movie_features_dict)
+    movie_feature_vectors_dict, feature_names = create_feature_vectors(movie_features_dict)
 
-    k_values = list(range(1, 101))
+    tree_hyperparams = {
+        'max_depth': [1, 2, 3, 4, 5, 6],
+        'min_samples_split': [1, 2, 3, 4, 5, 6]
+    }
 
-    predictions_dict: dict[int, int] = predict_ratings(train_data_df, task_data_df, movie_feature_vectors_dict, k_values)
-    save_predictions_to_csv(task_data_df, predictions_dict, train_data_df)
+    forest_hyperparams = {
+        'n_trees': [5, 10, 20, 30],
+        'max_depth': [1, 2, 3, 4, 5, 6],
+        'min_samples_split': [1, 2, 3, 4, 5, 6]
+    }
+
+    predictions_tree = predict_ratings(train_data_df, task_data_df, movie_feature_vectors_dict,
+                                       tree_hyperparams, 'tree', report_filename='tree_hyperparams_report.csv',
+                                       feature_names=feature_names)
+    save_predictions_to_csv(task_data_df, predictions_tree, train_data_df, 'submission_tree.csv')
+
+    predictions_forest = predict_ratings(train_data_df, task_data_df, movie_feature_vectors_dict,
+                                         forest_hyperparams, 'forest', report_filename='forest_hyperparams_report.csv',
+                                         feature_names=feature_names)
+    save_predictions_to_csv(task_data_df, predictions_forest, train_data_df, 'submission_forest.csv')
 
 if __name__ == "__main__":
     main()

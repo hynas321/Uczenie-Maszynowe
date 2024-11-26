@@ -5,11 +5,13 @@ from class_models.movie_feature_type import MovieFeatureType
 from class_models.movie_features import MovieFeatures
 from knn.min_max_scaler import MinMaxScaler
 
-def create_feature_vectors(movie_features_dict: Dict[int, MovieFeatures]) -> Dict[int, np.ndarray]:
+def create_feature_vectors(movie_features_dict: Dict[int, MovieFeatures]) -> Tuple[Dict[int, np.ndarray], List[str]]:
     all_features = []
 
     unique_genres: set[int] = {genre for movie in movie_features_dict.values() for genre in movie.genres}
-    genre_encoder: dict = {genre: i for i, genre in enumerate(unique_genres)}
+    genre_encoder: dict = {genre: i for i, genre in enumerate(sorted(unique_genres))}
+
+    genre_feature_names = [f'genre_{genre_id}' for genre_id in sorted(unique_genres)]
 
     movie_ids = list(movie_features_dict.keys())
 
@@ -20,11 +22,15 @@ def create_feature_vectors(movie_features_dict: Dict[int, MovieFeatures]) -> Dic
 
     scaler = MinMaxScaler()
     numerical_features = scaler.fit_transform(np.array([f[:7] for f in all_features]))
-    combined_features = np.hstack((numerical_features, [f[7:] for f in all_features]))
+    genre_features = np.array([f[7:] for f in all_features])
+    combined_features = np.hstack((numerical_features, genre_features))
 
     movie_feature_vectors_dict = {movie_id: combined_features[i] for i, movie_id in enumerate(movie_ids)}
 
-    return movie_feature_vectors_dict
+    numerical_feature_names = [name for name, feature_type in MovieFeatures.feature_types() if feature_type == MovieFeatureType.NUMERICAL]
+    feature_names = numerical_feature_names + genre_feature_names
+
+    return movie_feature_vectors_dict, feature_names
 
 def _build_feature_vector(movie_features: MovieFeatures, genre_encoder: Dict[int, int]) -> List[Union[int, float]]:
     feature_vector = []
