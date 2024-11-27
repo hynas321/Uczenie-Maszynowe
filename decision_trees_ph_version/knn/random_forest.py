@@ -1,7 +1,7 @@
 import numpy as np
 from collections import Counter
 
-from knn_ph_version.knn.decision_tree import DecisionTree
+from knn.decision_tree import DecisionTree
 
 class RandomForest:
     def __init__(self, n_trees=10, max_depth=10, min_samples_split=2, n_features=None):
