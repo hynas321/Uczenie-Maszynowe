@@ -25,14 +25,14 @@ def main():
     movie_feature_vectors_dict, feature_names = create_feature_vectors(movie_features_dict)
 
     tree_hyperparams = {
-        'max_depth': [2, 3, 4, 5],
-        'min_samples_split': [2, 5, 10]
+        'max_depth': [2, 3, 4, 5, 6, 7],
+        'min_samples_split': [2, 3, 4, 5, 6, 7]
     }
 
     forest_hyperparams = {
-        'n_trees': [5, 10, 15, 20],
-        'max_depth': [2, 3, 4, 5],
-        'min_samples_split': [2, 5, 10]
+        'n_trees': [15],
+        'max_depth': [2, 3, 4, 5, 6],
+        'min_samples_split': [2, 3, 4, 5, 6]
     }
 
     predictions_tree = predict_ratings(train_data_df, task_data_df, movie_feature_vectors_dict,
