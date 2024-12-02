@@ -7,7 +7,6 @@ from decision_trees_rg_version.utils.data_sorter import divide_list
 
 
 def predict_with_tree(users: list[User], users_number: int = None):
-
     tree_hyperparams = {
         'max_depth': [2, 3, 4, 5, 6, 7],
         'min_samples_split': [2, 3, 4, 5, 6, 7],
@@ -66,6 +65,8 @@ def predict_with_tree(users: list[User], users_number: int = None):
         print(
             f"For user {user.user_id}, the best depth is {best_deep}, and the best min_samples is {best_min_samples}, "
             f"accuracy for this is {best_accuracy * 100:.1f}%")
+
+        user.predict_ratings_with_tree()
 
 
 def calculate_accuracy(predictions, true_ratings):

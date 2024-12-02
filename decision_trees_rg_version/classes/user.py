@@ -1,5 +1,6 @@
 from typing import List
 
+import numpy as np
 
 from decision_trees_rg_version.classes.movie import Movie
 from decision_trees_rg_version.classes.decision_tree import DecisionTree
@@ -25,17 +26,16 @@ class User:
 
     def predict_ratings_with_tree(self):
         """Predict ratings for the user's test movies."""
-
         for movie in self.test_movies:
             movie_features = preprocess_movie_details(movie.movie_details)
-            movie.rating = self.tree.predict(movie_features)
+            # Convert prediction to a scalar
+            movie.rating = int(self.tree.predict(np.array(movie_features).reshape(1, -1))[0])
 
     def predict_ratings_with_forest(self):
         """Predict ratings for the user's test movies."""
-
         for movie in self.test_movies:
             movie_features = preprocess_movie_details(movie.movie_details)
-            movie.rating = self.forest.predict(movie_features)
+            movie.rating = int(self.forest.predict(np.array(movie_features).reshape(1, -1))[0])
 
     def print_prediction(self):
         predictions = []

@@ -1,6 +1,10 @@
 from collections import Counter
 import numpy as np
+import matplotlib.pyplot as plt
+import networkx as nx
+
 from typing import Optional, Tuple
+
 from decision_trees_rg_version.classes.tree_node import TreeNode
 
 class DecisionTree:
@@ -25,6 +29,9 @@ class DecisionTree:
         self.root = self._build_tree(X, y, depth=0)
 
     def predict(self, X: np.ndarray) -> np.ndarray:
+        # Ensure X is 2D
+        if X.ndim == 1:
+            X = X.reshape(1, -1)
         return np.array([self._traverse_tree(x, self.root) for x in X])
 
     def _build_tree(self, X: np.ndarray, y: np.ndarray, depth: int) -> TreeNode:
@@ -111,3 +118,36 @@ class DecisionTree:
             print(f"{'  ' * depth}[X{node.feature} <= {node.threshold}]")
             self.visualize(node.left, depth + 1)
             self.visualize(node.right, depth + 1)
+
+    def plot_tree_hierarchical(self):
+        if self.root is None:
+            print("The tree has not been trained yet.")
+            return
+
+        # Initialize figure
+        fig, ax = plt.subplots(figsize=(12, 8))
+        ax.axis("off")
+
+        # Draw the tree recursively
+        self._draw_tree(ax, self.root, 0.5, 1, 0.25, depth=0)
+        plt.show()
+
+    def _draw_tree(self, ax, node, x, y, x_offset, depth):
+        # Draw node
+        if node.is_leaf_node():
+            ax.text(x, y, f"Leaf\n{node.value}", fontsize=10, ha="center", bbox=dict(facecolor="lightgreen", edgecolor="black", boxstyle="round,pad=0.3"))
+        else:
+            ax.text(x, y, f"X{node.feature} ≤ {node.threshold:.2f}", fontsize=10, ha="center", bbox=dict(facecolor="lightblue", edgecolor="black", boxstyle="round,pad=0.3"))
+
+            # Draw branches and recurse for children
+            left_x = x - x_offset
+            right_x = x + x_offset
+            next_y = y - 0.1
+
+            # Draw edges
+            ax.plot([x, left_x], [y - 0.02, next_y + 0.02], "k-", lw=1)
+            ax.plot([x, right_x], [y - 0.02, next_y + 0.02], "k-", lw=1)
+
+            # Recurse for left and right children
+            self._draw_tree(ax, node.left, left_x, next_y, x_offset / 2, depth + 1)
+            self._draw_tree(ax, node.right, right_x, next_y, x_offset / 2, depth + 1)

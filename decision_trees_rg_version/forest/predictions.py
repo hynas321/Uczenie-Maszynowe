@@ -13,7 +13,7 @@ def predict_with_forest(users: list[User], users_number: int = None):
         'n_estimators': [10, 20, 30, 50, 70, 100],
     }
 
-    for user in users[:users_number]:
+    for a, user in enumerate(users[:users_number]):
         print(f"Processing user {user.user_id}...")
 
         train_data = user.train_movies
@@ -60,7 +60,9 @@ def predict_with_forest(users: list[User], users_number: int = None):
                 user.set_forest(forest)
 
         print(
-            f"For user {user.user_id}, the best tree number is {best_tree_numbers}, with accuracy = {best_accuracy * 100:.1f}%")
+            f"{a+1}. For user {user.user_id}, the best tree number is {best_tree_numbers}, with accuracy = {best_accuracy * 100:.1f}%")
+
+        user.predict_ratings_with_forest()
 
 
 def calculate_accuracy(predictions, true_ratings):
