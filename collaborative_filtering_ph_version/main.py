@@ -1,6 +1,6 @@
-from similarity_users_ph_version.utils.csv_functions import load_csv_data, save_predictions_to_csv, \
+from collaborative_filtering_ph_version.utils.csv_functions import load_csv_data, save_predictions_to_csv, \
     save_accuracies_to_csv
-from similarity_users_ph_version.utils.similarity_functions import validate_and_process_ratings
+from collaborative_filtering_ph_version.utils.similarity_functions import validate_and_process_ratings
 
 
 def main():
