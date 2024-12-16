@@ -1,15 +1,47 @@
-from collaborative_filtering_ph_version.utils.csv_functions import load_csv_data, save_predictions_to_csv, \
-    save_accuracies_to_csv
-from collaborative_filtering_ph_version.utils.similarity_functions import validate_and_process_ratings
+import os
+from itertools import product
+from typing import List, Tuple
+
+from dotenv import load_dotenv
+from tqdm import tqdm
+import pandas as pd
+
+from collaborative_filtering_ph_version.algorithms.collaborative_filtering import CollaborativeFiltering
+from collaborative_filtering_ph_version.algorithms.model_optimizer import ModelOptimizer
+from collaborative_filtering_ph_version.services.tmdb_api_service import TmdbApiService
+from collaborative_filtering_ph_version.utils.csv_functions import save_accuracies_to_csv, load_csv_data, \
+    save_predictions_to_csv, load_or_fetch_movie_features
+from collaborative_filtering_ph_version.utils.feature_functions import create_feature_vectors
 
 
 def main():
-    movie_data_df, task_data_df, train_data_df = load_csv_data()
+    load_dotenv()
+    api_key: str | None = os.getenv('TMDB_API_KEY')
 
-    task_data_filled, user_accuracies = validate_and_process_ratings(train_data_df, task_data_df)
+    if api_key is None:
+        raise TypeError("API key not found")
 
-    save_predictions_to_csv(task_data_filled, 'submission.csv')
-    save_accuracies_to_csv(user_accuracies, 'user_accuracy_report.csv')
+    movie_df, task_df, train_df = load_csv_data()
 
-if __name__ == "__main__":
+    tmdb_id_mapping = movie_df['tmdb_movie_id'].to_dict()
+    tmdb_service_instance = TmdbApiService(api_key)
+    fetched_movie_features = load_or_fetch_movie_features(tmdb_id_mapping, tmdb_service_instance)
+
+    feature_vectors_mapping, feature_column_names = create_feature_vectors(fetched_movie_features)
+    unique_users = train_df['user_id'].unique()
+
+    learning_rates = [0.001]
+    epoch_counts = [50]
+
+    collaborative_filtering = CollaborativeFiltering(learning_rates, epoch_counts,
+                                                  num_features=len(feature_column_names))
+
+    prediction_df, user_accuracies = collaborative_filtering.execute(unique_users, train_df, task_df,
+                                                        feature_vectors_mapping)
+
+    save_accuracies_to_csv(user_accuracies, 'user_accuracies.csv')
+    save_predictions_to_csv(prediction_df, 'submission.csv')
+
+
+if __name__ == '__main__':
     main()

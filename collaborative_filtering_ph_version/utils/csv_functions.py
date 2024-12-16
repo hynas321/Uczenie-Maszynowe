@@ -50,6 +50,9 @@ def save_accuracies_to_csv(user_accuracies: Dict[int, float], filename: str) -> 
             average_accuracy = sum(user_accuracies.values()) / len(user_accuracies)
             f.write(f"Average,{average_accuracy:.3f}\n")
 
-def save_predictions_to_csv(task_data_df: DataFrame, filename: str) -> None:
-    task_data_df['rating'] = task_data_df['rating'].round().astype(int)
-    task_data_df.to_csv(filename, sep=';', index=True, header=False)
+def save_predictions_to_csv(predicted_task_data_df: DataFrame, filename: str) -> None:
+    predicted_task_data_df['user_id'] = predicted_task_data_df['user_id'].astype(int)
+    predicted_task_data_df['movie_id'] = predicted_task_data_df['movie_id'].astype(int)
+    predicted_task_data_df['rating'] = predicted_task_data_df['rating'].round().astype(int)
+
+    predicted_task_data_df.to_csv(filename, sep=';', index=False, header=False)
