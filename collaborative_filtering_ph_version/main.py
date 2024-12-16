@@ -1,13 +1,8 @@
 import os
-from itertools import product
-from typing import List, Tuple
 
 from dotenv import load_dotenv
-from tqdm import tqdm
-import pandas as pd
 
 from collaborative_filtering_ph_version.algorithms.collaborative_filtering import CollaborativeFiltering
-from collaborative_filtering_ph_version.algorithms.model_optimizer import ModelOptimizer
 from collaborative_filtering_ph_version.services.tmdb_api_service import TmdbApiService
 from collaborative_filtering_ph_version.utils.csv_functions import save_accuracies_to_csv, load_csv_data, \
     save_predictions_to_csv, load_or_fetch_movie_features

@@ -1,8 +1,6 @@
 from itertools import product
 from typing import List, Tuple
 
-from collaborative_filtering_ph_version.class_models.movie_features import MovieFeatures
-
 
 class ModelOptimizer:
     def __init__(self, learning_rates: List[float], num_epochs: List[int], num_features: int):
@@ -10,14 +8,12 @@ class ModelOptimizer:
         self.num_epochs = num_epochs
         self.num_features = num_features
 
-
     def calculate_prediction(self, user_params: List[float], feature_vector: List[float]) -> float:
         rating = sum(param * feature for param, feature in zip(user_params, feature_vector)) + user_params[-1]
         return max(0, min(5, round(rating)))
 
-
     def compute_error_gradients(self, user_params: List[float], feature_matrix: List[List[float]],
-                                actual_ratings: List[int]) -> List[float]:
+                                actual_ratings: List[int], lambda_reg: float = 0.01) -> List[float]:
         gradients = [0] * len(user_params)
         for feature_vec, actual_rating in zip(feature_matrix, actual_ratings):
             error = self.calculate_prediction(user_params, feature_vec) - actual_rating
@@ -25,26 +21,39 @@ class ModelOptimizer:
             for idx in range(len(feature_vec)):
                 gradients[idx] += error * feature_vec[idx]
 
+        for idx in range(len(user_params) - 1):
+            gradients[idx] += lambda_reg * user_params[idx]
+
         return gradients
 
-
-    def adjust_parameters(self, user_params: List[float], gradients: List[float], learning_rate: float):
+    def adjust_parameters(self, user_params: List[float], gradients: List[float], learning_rate: float,
+                          lambda_reg: float = 0.01):
         for idx in range(len(user_params)):
-            user_params[idx] -= learning_rate * gradients[idx]
-
+            if idx < len(user_params) - 1:
+                user_params[idx] -= learning_rate * (gradients[idx] + lambda_reg * user_params[idx])
+            else:
+                user_params[idx] -= learning_rate * gradients[idx]
 
     def optimize_user_params(self, feature_matrix: List[List[float]], actual_ratings: List[int], learning_rate: float,
-                             epochs: int) -> List[float]:
+                             epochs: int, lambda_reg: float = 0.01) -> List[float]:
         user_params = [0] * (self.num_features + 1)
 
         for _ in range(epochs):
-            gradients = self.compute_error_gradients(user_params, feature_matrix, actual_ratings)
-            self.adjust_parameters(user_params, gradients, learning_rate)
+            gradients = self.compute_error_gradients(user_params, feature_matrix, actual_ratings, lambda_reg)
+            self.adjust_parameters(user_params, gradients, learning_rate, lambda_reg)
 
         return user_params
 
+    def normalize_ratings(self, actual_ratings: List[int]) -> (List[float], List[int]):
+        mean_rating = sum(actual_ratings) / len(actual_ratings)
+        normalized_ratings = [rating - mean_rating for rating in actual_ratings]
+        return mean_rating, normalized_ratings
 
-    def find_optimal_hyperparameters(self, data_splits: List[List[Tuple[MovieFeatures, int]]]) -> Tuple[float, int, float]:
+    def denormalize_rating(self, normalized_rating: float, mean_rating: float) -> float:
+        return normalized_rating + mean_rating
+
+    def find_optimal_hyperparameters(self, data_splits: List[List[Tuple[List[float], int]]]) -> Tuple[
+        float, int, float]:
         optimal_lr, optimal_epoch, highest_accuracy = 0, 0, 0
         for learning_rate, epoch_count in product(self.learning_rates, self.num_epochs):
             avg_accuracy = 0
@@ -60,11 +69,14 @@ class ModelOptimizer:
                     feature_matrix.append(features)
                     actual_ratings.append(rating)
 
-                user_params = self.optimize_user_params(feature_matrix, actual_ratings, learning_rate, epoch_count)
+                mean_rating, normalized_ratings = self.normalize_ratings(actual_ratings)
+                user_params = self.optimize_user_params(feature_matrix, normalized_ratings, learning_rate, epoch_count)
 
                 valid_predictions = 0
                 for features, actual_rating in validation_split:
-                    if actual_rating == self.calculate_prediction(user_params, features):
+                    normalized_pred = self.calculate_prediction(user_params, features)
+                    prediction = self.denormalize_rating(normalized_pred, mean_rating)
+                    if round(prediction) == actual_rating:
                         valid_predictions += 1
 
                 avg_accuracy += valid_predictions / len(validation_split)
