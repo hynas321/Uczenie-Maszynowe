@@ -32,15 +32,13 @@ class CollaborativeFiltering:
                 feature_matrix.append(features)
                 actual_ratings.append(rating)
 
-            mean_rating, normalized_ratings = self.optimizer.normalize_ratings(actual_ratings)
-            optimized_params = self.optimizer.optimize_user_params(feature_matrix, normalized_ratings, best_lr, best_epoch)
+            optimized_params = self.optimizer.optimize_user_params(feature_matrix, actual_ratings, best_lr, best_epoch)
 
             for _, row in user_task_data.iterrows():
                 movie_id = row.movie_id
                 feature_vector = feature_vector_mapping.get(movie_id)
                 if feature_vector is not None:
-                    normalized_rating = self.optimizer.calculate_prediction(optimized_params, feature_vector)
-                    estimated_rating = self.optimizer.denormalize_rating(normalized_rating, mean_rating)
+                    estimated_rating = self.optimizer.calculate_prediction(optimized_params, feature_vector)
                     prediction_records.append({
                         'index': row.name,
                         'user_id': user_id,

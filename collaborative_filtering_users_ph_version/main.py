@@ -25,8 +25,8 @@ def main():
     feature_vectors_mapping, feature_column_names = create_feature_vectors(fetched_movie_features)
     unique_users = train_df['user_id'].unique()
 
-    learning_rates = [0.001]
-    epoch_counts = [50]
+    learning_rates = [0.0001, 0.001, 0.01, 0.05, 0.1]
+    epoch_counts = [10, 25, 50, 100, 200]
 
     collaborative_filtering = CollaborativeFiltering(learning_rates, epoch_counts,
                                                   num_features=len(feature_column_names))

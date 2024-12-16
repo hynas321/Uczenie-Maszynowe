@@ -44,16 +44,7 @@ class ModelOptimizer:
 
         return user_params
 
-    def normalize_ratings(self, actual_ratings: List[int]) -> (List[float], List[int]):
-        mean_rating = sum(actual_ratings) / len(actual_ratings)
-        normalized_ratings = [rating - mean_rating for rating in actual_ratings]
-        return mean_rating, normalized_ratings
-
-    def denormalize_rating(self, normalized_rating: float, mean_rating: float) -> float:
-        return normalized_rating + mean_rating
-
-    def find_optimal_hyperparameters(self, data_splits: List[List[Tuple[List[float], int]]]) -> Tuple[
-        float, int, float]:
+    def find_optimal_hyperparameters(self, data_splits: List[List[Tuple[List[float], int]]]) -> Tuple[float, int, float]:
         optimal_lr, optimal_epoch, highest_accuracy = 0, 0, 0
         for learning_rate, epoch_count in product(self.learning_rates, self.num_epochs):
             avg_accuracy = 0
@@ -69,13 +60,11 @@ class ModelOptimizer:
                     feature_matrix.append(features)
                     actual_ratings.append(rating)
 
-                mean_rating, normalized_ratings = self.normalize_ratings(actual_ratings)
-                user_params = self.optimize_user_params(feature_matrix, normalized_ratings, learning_rate, epoch_count)
+                user_params = self.optimize_user_params(feature_matrix, actual_ratings, learning_rate, epoch_count)
 
                 valid_predictions = 0
                 for features, actual_rating in validation_split:
-                    normalized_pred = self.calculate_prediction(user_params, features)
-                    prediction = self.denormalize_rating(normalized_pred, mean_rating)
+                    prediction = self.calculate_prediction(user_params, features)
                     if round(prediction) == actual_rating:
                         valid_predictions += 1
 
