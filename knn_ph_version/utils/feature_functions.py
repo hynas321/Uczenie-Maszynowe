@@ -1,9 +1,11 @@
 from typing import List, Tuple, Dict, Union, Optional
 import numpy as np
 from datetime import datetime
-from class_models.movie_feature_type import MovieFeatureType
-from class_models.movie_features import MovieFeatures
-from knn.min_max_scaler import MinMaxScaler
+
+from knn_ph_version.class_models.movie_feature_type import MovieFeatureType
+from knn_ph_version.class_models.movie_features import MovieFeatures
+from knn_ph_version.knn.min_max_scaler import MinMaxScaler
+
 
 def create_feature_vectors(movie_features_dict: Dict[int, MovieFeatures]) -> Dict[int, np.ndarray]:
     all_features = []

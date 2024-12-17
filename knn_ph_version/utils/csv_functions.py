@@ -7,8 +7,9 @@ import pandas as pd
 from pandas import DataFrame
 from tqdm import tqdm
 
-from class_models.movie_features import MovieFeatures
-from services.tmdb_api_service import TmdbApiService
+from knn_ph_version.class_models.movie_features import MovieFeatures
+from knn_ph_version.services.tmdb_api_service import TmdbApiService
+
 
 def load_csv_data() -> Tuple[DataFrame, DataFrame, DataFrame]:
     movie_data_df = pd.read_csv('csv_files/movie.csv', delimiter=';', index_col=0,

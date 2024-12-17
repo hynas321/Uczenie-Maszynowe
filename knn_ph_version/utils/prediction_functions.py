@@ -5,9 +5,10 @@ from numpy import floating
 from pandas import DataFrame
 from tqdm import tqdm
 
-from class_models.movie_features import MovieFeatures
-from knn.knn import KNN
-from utils.csv_functions import save_k_report
+from knn_ph_version.class_models.movie_features import MovieFeatures
+from knn_ph_version.knn.knn import KNN
+from knn_ph_version.utils.csv_functions import save_k_report
+
 
 def predict_ratings(train_data_df: DataFrame, task_data_df: DataFrame,
                     movie_feature_vectors: Dict[int, np.ndarray], k_values: List[int],

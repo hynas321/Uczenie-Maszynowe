@@ -1,6 +1,8 @@
 from typing import List, Tuple
 import numpy as np
-from class_models.movie_feature_type import MovieFeatureType
+
+from knn_ph_version.class_models.movie_feature_type import MovieFeatureType
+
 
 def compute_similarity(a: np.ndarray, b: np.ndarray, feature_types: List[Tuple[str, MovieFeatureType]]) -> float:
     """

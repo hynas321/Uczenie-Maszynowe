@@ -1,8 +1,10 @@
 from typing import List, Tuple, Any, Optional
 import numpy as np
-from utils.similarity_functions import compute_similarity
 
 from collections import Counter
+
+from knn_ph_version.utils.similarity_functions import compute_similarity
+
 
 class KNN:
     def __init__(self, feature_types: List[Tuple[str, Any]], k: int = 5,
