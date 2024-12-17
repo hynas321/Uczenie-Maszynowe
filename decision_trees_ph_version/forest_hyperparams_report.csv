@@ -1,0 +1,26 @@
+Hyperparameters,Count of Best,Average Accuracy
+"max_depth=2, min_samples_split=2, n_trees=15",41,0.3960273122284295
+"max_depth=2, min_samples_split=3, n_trees=15",30,0.3905959031657356
+"max_depth=2, min_samples_split=4, n_trees=15",33,0.4003724394785847
+"max_depth=2, min_samples_split=5, n_trees=15",21,0.39556176288019856
+"max_depth=2, min_samples_split=6, n_trees=15",25,0.3940099317194289
+"max_depth=3, min_samples_split=2, n_trees=15",21,0.39121663563004344
+"max_depth=3, min_samples_split=3, n_trees=15",15,0.3890440720049658
+"max_depth=3, min_samples_split=4, n_trees=15",14,0.38454376163873377
+"max_depth=3, min_samples_split=5, n_trees=15",10,0.39540657976412164
+"max_depth=3, min_samples_split=6, n_trees=15",16,0.3919925512104283
+"max_depth=4, min_samples_split=2, n_trees=15",11,0.38097454996896335
+"max_depth=4, min_samples_split=3, n_trees=15",11,0.37973308504034764
+"max_depth=4, min_samples_split=4, n_trees=15",13,0.38609559279950334
+"max_depth=4, min_samples_split=5, n_trees=15",9,0.36607697082557417
+"max_depth=4, min_samples_split=6, n_trees=15",8,0.3764742396027312
+"max_depth=5, min_samples_split=2, n_trees=15",10,0.37368094351334574
+"max_depth=5, min_samples_split=3, n_trees=15",7,0.3688702669149596
+"max_depth=5, min_samples_split=4, n_trees=15",12,0.37057728119180633
+"max_depth=5, min_samples_split=5, n_trees=15",10,0.367163252638113
+"max_depth=5, min_samples_split=6, n_trees=15",5,0.36623215394165115
+"max_depth=6, min_samples_split=2, n_trees=15",11,0.3677839851024209
+"max_depth=6, min_samples_split=3, n_trees=15",6,0.36607697082557417
+"max_depth=6, min_samples_split=4, n_trees=15",2,0.3578522656734947
+"max_depth=6, min_samples_split=5, n_trees=15",7,0.3715083798882682
+"max_depth=6, min_samples_split=6, n_trees=15",10,0.3753879577901924
