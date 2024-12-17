@@ -7,8 +7,8 @@ from tqdm import tqdm
 from itertools import product
 import csv
 
-from knn.decision_tree import DecisionTree
-from knn.random_forest import RandomForest
+from decision_trees_ph_version.algorithms.decision_tree import DecisionTree
+from decision_trees_ph_version.algorithms.random_forest import RandomForest
 
 
 def predict_ratings(train_data_df: DataFrame, task_data_df: DataFrame,

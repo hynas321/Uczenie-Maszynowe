@@ -1,6 +1,7 @@
 from tmdbv3api import TMDb, Movie
 
-from class_models.movie_features import MovieFeatures
+from decision_trees_ph_version.class_models.movie_features import MovieFeatures
+
 
 class TmdbApiService:
     def __init__(self, tmdb_api_key: str) -> None:

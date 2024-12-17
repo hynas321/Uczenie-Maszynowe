@@ -1,7 +1,8 @@
 import json
 from typing import List, Tuple
 
-from class_models.movie_feature_type import MovieFeatureType
+from decision_trees_ph_version.class_models.movie_feature_type import MovieFeatureType
+
 
 class MovieFeatures:
     def __init__(self, release_date: str, runtime: int, budget: int, revenue: int,
