@@ -1,6 +1,6 @@
 from tmdbv3api import TMDb, Movie
 
-from collaborative_filtering_ph_version.class_models.movie_features import MovieFeatures
+from collaborative_filtering_users_ph_version.class_models.movie_features import MovieFeatures
 
 class TmdbApiService:
     def __init__(self, tmdb_api_key: str) -> None:

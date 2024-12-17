@@ -1,7 +1,7 @@
 import pandas as pd
 from tqdm import tqdm
 from typing import List
-from collaborative_filtering_ph_version.algorithms.model_optimizer import ModelOptimizer
+from collaborative_filtering_users_ph_version.algorithms.model_optimizer import ModelOptimizer
 
 
 class CollaborativeFiltering:
@@ -46,7 +46,7 @@ class CollaborativeFiltering:
                         'rating': estimated_rating
                     })
 
-            user_accuracy_mapping[idx] = best_acc
+            user_accuracy_mapping[user_id] = best_acc
 
         predictions_dataframe = pd.DataFrame(prediction_records)
 

@@ -2,9 +2,9 @@ from typing import List, Tuple, Dict, Union, Optional
 import numpy as np
 from datetime import datetime
 
-from collaborative_filtering_ph_version.algorithms.min_max_scaler import MinMaxScaler
-from collaborative_filtering_ph_version.class_models.movie_features import MovieFeatures
-from collaborative_filtering_ph_version.class_models.movie_features_type import MovieFeatureType
+from collaborative_filtering_users_ph_version.algorithms.min_max_scaler import MinMaxScaler
+from collaborative_filtering_users_ph_version.class_models.movie_features import MovieFeatures
+from collaborative_filtering_users_ph_version.class_models.movie_features_type import MovieFeatureType
 
 
 def create_feature_vectors(movie_features_dict: Dict[int, MovieFeatures]) -> Tuple[Dict[int, np.ndarray], List[str]]:

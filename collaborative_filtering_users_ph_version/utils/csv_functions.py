@@ -4,8 +4,8 @@ from pandas import DataFrame
 import pandas as pd
 from tqdm import tqdm
 
-from collaborative_filtering_ph_version.class_models.movie_features import MovieFeatures
-from collaborative_filtering_ph_version.services.tmdb_api_service import TmdbApiService
+from collaborative_filtering_users_ph_version.class_models.movie_features import MovieFeatures
+from collaborative_filtering_users_ph_version.services.tmdb_api_service import TmdbApiService
 
 
 def load_csv_data() -> tuple[DataFrame, DataFrame, DataFrame]:

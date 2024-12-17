@@ -1,7 +1,7 @@
 import json
 from typing import List, Tuple
 
-from collaborative_filtering_ph_version.class_models.movie_features_type import MovieFeatureType
+from collaborative_filtering_users_ph_version.class_models.movie_features_type import MovieFeatureType
 
 class MovieFeatures:
     def __init__(self, release_date: str, runtime: int, budget: int, revenue: int,
