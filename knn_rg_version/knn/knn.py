@@ -4,7 +4,7 @@ from knn_rg_version.utils.similiarity_functions import get_movies_similarity
 
 
 def calculate_best_k_for_user(users: list[User], user_range: int = 10):
-    k_values = range(1, 2, 2)
+    k_values = range(1, 50, 2)
 
     for user in users[:user_range]:
         train_data = user.train_movies
