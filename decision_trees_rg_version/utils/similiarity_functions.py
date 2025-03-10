@@ -46,19 +46,12 @@ def get_release_date_similarity(dat_1, dat_2):
 
 
 def get_list_data_similarity(lis_1, lis_2):
-    """
-        Calculate the dissimilarity between two lists of languages.
-        Lower overlap means higher dissimilarity.
-        """
-    # Convert lists to sets
     set1, set2 = set(lis_1), set(lis_2)
 
-    # Calculate intersection and union
-    intersection = set1 & set2  # Common elements
-    union = set1 | set2  # All unique elements
+    intersection = set1 & set2
+    union = set1 | set2
 
-    # Jaccard dissimilarity = 1 - |intersection| / |union|
-    if not union:  # Avoid division by zero if both sets are empty
+    if not union:
         return 0.0
 
     dissimilarity = 1 - (len(intersection) / len(union))

@@ -24,7 +24,6 @@ def cross_validate(users: list[User], threshold: int = None):
         for user__ in users_table:
             assess_training_predictions(user, user__, threshold)
 
-        # user.show_train_set()
         accuracy = 100 * get_accuracy(user, threshold)
 
         all_accuracy.append(accuracy)

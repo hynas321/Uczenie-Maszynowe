@@ -9,22 +9,14 @@ from decision_trees_rg_version.utils.data_sorter import get_movies_by_user
 from decision_trees_rg_version.servies.tmdb_api import TMDBapi
 
 
-# Function to fetch or generate data
 def fetch_or_generate_data(pickle_file_path, generate_data_function):
-    """
-    Fetch data from a pickle file if it exists; otherwise, generate and save the data.
-
-    :param pickle_file_path: Path to the pickle file.
-    :param generate_data_function: Function to generate data if the file does not exist.
-    :return: The data, either loaded or newly generated.
-    """
-    if os.path.exists(pickle_file_path):  # Check if the file exists
+    if os.path.exists(pickle_file_path):
         print(f"Loading data from {pickle_file_path}...")
         with open(pickle_file_path, "rb") as file:
             data = pickle.load(file)
     else:
         print(f"{pickle_file_path} not found. Generating new data...")
-        data = generate_data_function()  # Call your custom function to generate data
+        data = generate_data_function()
         with open(pickle_file_path, "wb") as file:
             pickle.dump(data, file)
         print(f"Data saved to {pickle_file_path}.")
@@ -73,7 +65,6 @@ def generate_data():
 
 
 def get_users():
-    # Path to the pickle file
     pickle_path = "users_data.pkl"
 
     data = fetch_or_generate_data(pickle_path, generate_data)

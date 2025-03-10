@@ -17,7 +17,7 @@ def calculate_days_since_release(release_date_str):
 class TMDBapi:
     def __init__(self):
         self.tmdb = TMDb()
-        self.tmdb.api_key = '0a35be2e46bd817c47c0cf38f1c8dfdc'
+        self.tmdb.api_key = 'place-api-key-here'
         self.movie = Movie()
 
     def get_movie_details(self, tmdb_movie_id: int):

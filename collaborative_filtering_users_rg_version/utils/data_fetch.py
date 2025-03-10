@@ -9,22 +9,14 @@ from collaborative_filtering_users_rg_version.utils.csv_reader import load_csv_d
 from collaborative_filtering_users_rg_version.utils.data_sorter import get_movies_by_user
 
 
-# Function to fetch or generate data
 def fetch_or_generate_data(pickle_file_path, generate_data_function):
-    """
-    Fetch data from a pickle file if it exists; otherwise, generate and save the data.
-
-    :param pickle_file_path: Path to the pickle file.
-    :param generate_data_function: Function to generate data if the file does not exist.
-    :return: The data, either loaded or newly generated.
-    """
-    if os.path.exists(pickle_file_path):  # Check if the file exists
+    if os.path.exists(pickle_file_path):
         print(f"Loading data from {pickle_file_path}...")
         with open(pickle_file_path, "rb") as file:
             data = pickle.load(file)
     else:
         print(f"{pickle_file_path} not found. Generating new data...")
-        data = generate_data_function()  # Call your custom function to generate data
+        data = generate_data_function()
         with open(pickle_file_path, "wb") as file:
             pickle.dump(data, file)
         print(f"Data saved to {pickle_file_path}.")
@@ -80,13 +72,6 @@ import numpy as np
 
 
 def standardize_features(movies):
-    """
-    Standaryzuje cechy liczbowe dla tablicy obiektów Movie, obsługując zerowe odchylenie standardowe.
-
-    :param movies: Lista obiektów klasy Movie.
-    :return: Lista obiektów klasy Movie z cechami MovieDetails znormalizowanymi.
-    """
-    # Ekstrakcja cech liczbowych z obiektów MovieDetails
     feature_matrix = np.array([
         [
             movie.movie_details.adult,
@@ -101,17 +86,13 @@ def standardize_features(movies):
         for movie in movies
     ])
 
-    # Obliczanie średniej i odchylenia standardowego dla każdej cechy
     means = feature_matrix.mean(axis=0)
     stds = feature_matrix.std(axis=0)
 
-    # Obsługa zerowego odchylenia standardowego
-    stds[stds == 0] = 1  # Aby uniknąć dzielenia przez 0, zostawiamy cechy bez zmian
+    stds[stds == 0] = 1
 
-    # Standaryzacja cech
     standardized_matrix = (feature_matrix - means) / stds
 
-    # Aktualizacja obiektów MovieDetails w obiektach Movie
     for i, movie in enumerate(movies):
         movie.movie_details.adult = standardized_matrix[i, 0]
         movie.movie_details.popularity = standardized_matrix[i, 1]
@@ -126,7 +107,6 @@ def standardize_features(movies):
 
 
 def get_users():
-    # Path to the pickle file
     pickle_path = "users_data.pkl"
 
     data = fetch_or_generate_data(pickle_path, generate_data)

@@ -13,26 +13,21 @@ class User:
         self.user_id: int = user_id
         self.train_movies: List[Movie] = train_movies
         self.test_movies: List[Movie] = test_movies
-        self.tree: DecisionTree = None  # Tree parameter for the user
+        self.tree: DecisionTree = None
         self.forest: RandomForest = None
 
     def set_tree(self, tree: DecisionTree):
-        """Assign a trained decision tree to the user."""
         self.tree = tree
 
     def set_forest(self, forest: RandomForest):
-        """Assign a trained decision tree to the user."""
         self.forest = forest
 
     def predict_ratings_with_tree(self):
-        """Predict ratings for the user's test movies."""
         for movie in self.test_movies:
             movie_features = preprocess_movie_details(movie.movie_details)
-            # Convert prediction to a scalar
             movie.rating = int(self.tree.predict(np.array(movie_features).reshape(1, -1))[0])
 
     def predict_ratings_with_forest(self):
-        """Predict ratings for the user's test movies."""
         for movie in self.test_movies:
             movie_features = preprocess_movie_details(movie.movie_details)
             movie.rating = int(self.forest.predict(np.array(movie_features).reshape(1, -1))[0])

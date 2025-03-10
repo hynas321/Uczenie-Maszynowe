@@ -21,15 +21,13 @@ def get_movies_by_user(data: pd.DataFrame) -> List[Tuple[int, List[Tuple[int, in
 
 
 def divide_list(lst, slices_number=5):
-    # Calculate the size of each sublist
     sublist_size = len(lst) // slices_number
-    remainder = len(lst) % slices_number  # To account for any remaining elements
+    remainder = len(lst) % slices_number
 
     lists = []
     start_index = 0
 
     for i in range(slices_number):
-        # If there are remainders, distribute one extra element to the first few sublists
         end_index = start_index + sublist_size + (1 if i < remainder else 0)
         sublist = lst[start_index:end_index]
         lists.append(sublist)
@@ -43,15 +41,13 @@ def get_k_best_point(points, k: int):
 
     k_points = sorted_points[:k]
 
-    # Extract the ratings (second element of each sublist)
     ratings = [point[1] for point in k_points]
 
     frequency = Counter(ratings)
 
-    most_common = frequency.most_common()  # Returns list of (rating, count) tuples
-    max_count = most_common[0][1]  # Maximum occurrence count
+    most_common = frequency.most_common()
+    max_count = most_common[0][1]
 
-    # Collect all ratings with the highest frequency
     most_frequent = [rating for rating, count in most_common if count == max_count]
 
     return most_frequent[0]

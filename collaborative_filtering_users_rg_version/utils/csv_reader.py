@@ -3,14 +3,7 @@ from typing import Tuple
 
 
 def load_csv_data() -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-    """
-    Loads movie, task, and train data from CSV files into separate Pandas DataFrames.
-
-    Returns:
-        Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]: DataFrames for movie, task, and train data.
-    """
     try:
-
         movie_data = pd.read_csv(
             'csv_files/movie.csv',
             delimiter=';',

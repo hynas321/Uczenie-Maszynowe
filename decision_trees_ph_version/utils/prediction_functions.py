@@ -14,9 +14,6 @@ from decision_trees_ph_version.algorithms.random_forest import RandomForest
 def predict_ratings(train_data_df: DataFrame, task_data_df: DataFrame,
                     movie_feature_vectors: Dict[int, np.ndarray], hyperparameter_values: Dict[str, List[Any]],
                     model_type: str, report_filename: str, feature_names: List[str]) -> Dict[int, int]:
-    """
-    Predicts ratings for user-movie pairs using Decision Tree or Random Forest
-    """
     user_ratings = group_user_ratings(train_data_df)
 
     predictions = {}
@@ -59,9 +56,6 @@ def predict_ratings(train_data_df: DataFrame, task_data_df: DataFrame,
 
 
 def group_user_ratings(train_data_df: DataFrame) -> Dict[int, List[Tuple[int, int]]]:
-    """
-    Groups user ratings from the training data.
-    """
     user_ratings = defaultdict(list)
     for _, row in train_data_df.iterrows():
         user_ratings[row['user_id']].append((row['movie_id'], row['rating']))
@@ -70,9 +64,6 @@ def group_user_ratings(train_data_df: DataFrame) -> Dict[int, List[Tuple[int, in
 
 def prepare_user_training_data(user_id: int, user_ratings: Dict[int, List[Tuple[int, int]]],
                                movie_feature_vectors: Dict[int, np.ndarray]) -> Tuple[List[np.ndarray], List[int]]:
-    """
-    Prepares training data for a specific user.
-    """
     user_movies = user_ratings.get(user_id, [])
     X_train = [movie_feature_vectors[movie] for movie, _ in user_movies if movie in movie_feature_vectors]
     y_train = [rating for movie, rating in user_movies if movie in movie_feature_vectors]
@@ -82,9 +73,6 @@ def prepare_user_training_data(user_id: int, user_ratings: Dict[int, List[Tuple[
 def select_best_params(X_train: List[np.ndarray], y_train: List[int], hyperparameter_values: Dict[str, List[Any]],
                        model_type: str, hyperparameter_scores: defaultdict, best_hyperparam_counts: defaultdict) -> \
 Dict[str, Any]:
-    """
-    Selects the best hyperparameters using cross-validation.
-    """
 
     hyperparam_names = list(hyperparameter_values.keys())
     hyperparam_combinations = list(product(*hyperparameter_values.values()))
@@ -99,7 +87,6 @@ Dict[str, Any]:
         param_accuracies[param_key] = accuracy
         hyperparameter_scores[param_key].append(accuracy)
 
-    # Select the best hyperparameters
     best_params_key = max(param_accuracies, key=param_accuracies.get)
     best_params = dict(best_params_key)
     best_hyperparam_counts[best_params_key] += 1
@@ -109,9 +96,6 @@ Dict[str, Any]:
 
 def cross_validate_params(X_train: List[np.ndarray], y_train: List[int], params: Dict[str, Any], model_type: str,
                           test_size: float = 0.2) -> float:
-    """
-    Cross-validates hyperparameters to calculate the accuracy.
-    """
     n_samples = len(X_train)
     if n_samples < 5:
         return 0.0
@@ -140,15 +124,12 @@ def cross_validate_params(X_train: List[np.ndarray], y_train: List[int], params:
 
 def predict_for_user(user_id: int, task_data_df: DataFrame, movie_feature_vectors: Dict[int, np.ndarray],
                      model, predictions: Dict[int, int], train_data_df: DataFrame) -> None:
-    """
-    Predicts ratings for a user and updates the predictions dictionary.
-    """
     user_task_indices = task_data_df[task_data_df['user_id'] == user_id].index
 
     for idx in user_task_indices:
         movie_id = task_data_df.loc[idx, 'movie_id']
         if movie_id not in movie_feature_vectors:
-            predictions[idx] = int(round(train_data_df['rating'].mean()))  # Default rating
+            predictions[idx] = int(round(train_data_df['rating'].mean()))
             continue
 
         task_vector = movie_feature_vectors[movie_id]
@@ -158,9 +139,6 @@ def predict_for_user(user_id: int, task_data_df: DataFrame, movie_feature_vector
 
 def assign_default_ratings(user_id: int, task_data_df: DataFrame, predictions: Dict[int, int],
                            train_data_df: DataFrame):
-    """
-    Assign default ratings for a user when not enough data is available.
-    """
     user_task_indices = task_data_df[task_data_df['user_id'] == user_id].index
     default_rating = int(round(train_data_df['rating'].mean()))
     for idx in user_task_indices:
@@ -202,9 +180,7 @@ def save_tree_visualization(model: DecisionTree, filename: str, feature_names: L
         plot_node(ax, text, current_center, parent_center)
 
         if not node.is_leaf_node():
-            # Left
             traverse_and_plot(node.left, ax, x - dx, y - dy, dx / 2, dy, current_center)
-            # Right
             traverse_and_plot(node.right, ax, x + dx, y - dy, dx / 2, dy, current_center)
 
     fig, ax = plt.subplots(figsize=(12, 8))

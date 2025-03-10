@@ -6,33 +6,28 @@ from collaborative_filtering_users_rg_version.utils.data_fetch import get_users
 from collaborative_filtering_users_rg_version.utils.data_sorter import divide_list
 
 
-# Funkcja przewidująca ocenę
 def predict_rating(p_r, x_m):
-    prediction = sum(p * x for p, x in zip(p_r, x_m)) + p_r[-1]  # Ostatni element to bias p_0
-    # Ograniczanie wartości oceny do przedziału 0-5
-    return max(0, min(5, round(prediction)))  # Zaokrąglenie i ograniczenie
+    prediction = sum(p * x for p, x in zip(p_r, x_m)) + p_r[-1]
+    return max(0, min(5, round(prediction)))
 
 
-# Funkcja gradientu dla parametrów użytkownika
 def compute_gradients(p_r, x_m_list, y_list):
     gradients = [0] * len(p_r)
     for x_m, y in zip(x_m_list, y_list):
         error = predict_rating(p_r, x_m) - y
-        gradients[-1] += error  # Gradient dla biasu p_0
+        gradients[-1] += error
         for i in range(len(x_m)):
-            gradients[i] += error * x_m[i]  # Gradient dla p_i
+            gradients[i] += error * x_m[i]
     return gradients
 
 
-# Aktualizacja parametrów gradientu
 def update_parameters(p_r, gradients, eta):
     for i in range(len(p_r)):
         p_r[i] -= eta * gradients[i]
 
 
-# Główna pętla uczenia
 def train_user_parameters(x_m_list, y_list, n_features, eta, epochs):
-    p_r = [0] * (n_features + 1)  # Inicjalizacja parametrów użytkownika (n cech + bias)
+    p_r = [0] * (n_features + 1)
     for epoch in range(epochs):
         gradients = compute_gradients(p_r, x_m_list, y_list)
         update_parameters(p_r, gradients, eta)
@@ -42,16 +37,12 @@ def train_user_parameters(x_m_list, y_list, n_features, eta, epochs):
 def main():
     start_time = time.time()
 
-    # getting users data
     users = get_users()
     print("Data loaded...")
 
     epochs = [50, 100, 200, 300, 400, 500]
     etas = [0.001, 0.005, 0.01, 0.05, 0.1]
 
-    accuracy_all = 0
-
-    # Przykład użycia
     for a, user in enumerate(users):
         best_eta, best_epoch = 0, 0
         best_accuracy = 0
@@ -69,8 +60,8 @@ def main():
                 test_set = test_slice
                 train_set = [item for j, slice_ in enumerate(data_slices) if j != i for item in slice_]
 
-                x_m_list = [movie.get_features() for movie in train_set]  # Cechy filmów
-                y_list = [movie.rating for movie in train_set]  # Oceny filmów
+                x_m_list = [movie.get_features() for movie in train_set]
+                y_list = [movie.rating for movie in train_set]
 
                 user.p_r = train_user_parameters(x_m_list, y_list, n_features=9, eta=eta, epochs=epoch)
 

@@ -34,7 +34,6 @@ def calculate_best_k_for_user(users: list[User], user_range: int = 10):
 
                     most_frequent_point_rating = get_k_best_point(points, k)
 
-                    # print(f"Calculated rating = {most_frequent}, but the real rating = {test_point.rating}")
                     if most_frequent_point_rating == test_point.rating:
                         proper_rating_proposal += 1
 
@@ -46,7 +45,6 @@ def calculate_best_k_for_user(users: list[User], user_range: int = 10):
                 user.k = k
                 best_accuracy = k_accuracy
 
-        # print(f"For user with id = {user.user_id}, the best accuracy = {(best_accuracy * 100):.1f} %,
     print("Best k for each user found...")
 
     return users[:user_range]

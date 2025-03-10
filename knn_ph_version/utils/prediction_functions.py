@@ -13,9 +13,6 @@ from knn_ph_version.utils.csv_functions import save_k_report
 def predict_ratings(train_data_df: DataFrame, task_data_df: DataFrame,
                     movie_feature_vectors: Dict[int, np.ndarray], k_values: List[int],
                     report_filename: str = "knn_report.csv") -> Dict[int, int]:
-    """
-    Predicts ratings for user-movie pairs
-    """
     user_ratings: dict[int, list[tuple[int, int]]] = group_user_ratings(train_data_df)
 
     predictions = {}
@@ -37,9 +34,6 @@ def predict_ratings(train_data_df: DataFrame, task_data_df: DataFrame,
     return predictions
 
 def group_user_ratings(train_data_df: DataFrame) -> Dict[int, List[Tuple[int, int]]]:
-    """
-    Groups user ratings from the training data.
-    """
     user_ratings = defaultdict(list)
     for _, row in train_data_df.iterrows():
         user_ratings[row['user_id']].append((row['movie_id'], row['rating']))
@@ -47,9 +41,6 @@ def group_user_ratings(train_data_df: DataFrame) -> Dict[int, List[Tuple[int, in
 
 def prepare_user_training_data(user_id: int, user_ratings: Dict[int, List[Tuple[int, int]]],
                                movie_feature_vectors: Dict[int, np.ndarray]) -> Tuple[List[np.ndarray], List[int]]:
-    """
-    Prepares training data for a specific user.
-    """
     user_movies = user_ratings.get(user_id, [])
     X_train = [movie_feature_vectors[movie] for movie, _ in user_movies if movie in movie_feature_vectors]
     y_train = [rating for movie, rating in user_movies if movie in movie_feature_vectors]
@@ -57,9 +48,6 @@ def prepare_user_training_data(user_id: int, user_ratings: Dict[int, List[Tuple[
 
 def select_best_k(X_train: List[np.ndarray], y_train: List[int], k_values: List[int],
                   k_scores: defaultdict, best_k_counts: defaultdict) -> int:
-    """
-    Selects the best k-value using cross-validation.
-    """
     k_accuracies = {}
     for k in k_values:
         accuracy = cross_validate_k(X_train, y_train, k)
@@ -71,9 +59,6 @@ def select_best_k(X_train: List[np.ndarray], y_train: List[int], k_values: List[
     return best_k
 
 def cross_validate_k(X_train: List[np.ndarray], y_train: List[int], k: int, test_size: float = 0.2) -> floating[Any]:
-    """
-    Cross-validates a k-value to calculate the accuracy.
-    """
     n_samples = len(X_train)
     test_indices = np.random.choice(range(n_samples), size=int(n_samples * test_size), replace=False)
     train_indices = list(set(range(n_samples)) - set(test_indices))
@@ -92,15 +77,12 @@ def cross_validate_k(X_train: List[np.ndarray], y_train: List[int], k: int, test
 
 def predict_for_user(user_id: int, task_data_df: DataFrame, movie_feature_vectors: Dict[int, np.ndarray],
                      knn: KNN, predictions: Dict[int, int], train_data_df: DataFrame) -> None:
-    """
-    Predicts ratings for a user and updates the predictions dictionary.
-`   """
     user_task_indices = task_data_df[task_data_df['user_id'] == user_id].index
 
     for idx in user_task_indices:
         movie_id = task_data_df.loc[idx, 'movie_id']
         if movie_id not in movie_feature_vectors:
-            predictions[idx] = 3  # Default rating
+            predictions[idx] = 3
             continue
 
         task_vector = movie_feature_vectors[movie_id]

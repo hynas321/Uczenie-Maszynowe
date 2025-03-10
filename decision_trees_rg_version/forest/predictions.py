@@ -17,7 +17,6 @@ def predict_with_forest(users: list[User], users_number: int = None):
         print(f"Processing user {user.user_id}...")
 
         train_data = user.train_movies
-        test_data = user.test_movies
         data_slices = divide_list(train_data)
 
         best_accuracy = -float('inf')
@@ -38,23 +37,16 @@ def predict_with_forest(users: list[User], users_number: int = None):
                 forest = RandomForest(n_estimators=tree_numbers, max_depth=5, max_features=3)
                 forest.fit(X, y)
 
-                # Predict on the test data
                 predictions = forest.predict(Z)
 
-                # Get true ratings for the test set
                 true_ratings = [movie.rating for movie in test_set]
 
-                # Calculate accuracy (exact match rate)
                 fold_accuracy = calculate_accuracy(predictions, true_ratings)
                 accuracies.append(fold_accuracy)
 
-                # Calculate the average accuracy for this hyperparameter setting
             avg_accuracy = np.mean(accuracies)
 
-            # print(f"Hyperparameters: tree_numbers={tree_numbers},> Accuracy: {avg_accuracy*100:.1f}%")
-
-            # Keep track of the best tree based on accuracy
-            if avg_accuracy > best_accuracy:  # Higher accuracy is better
+            if avg_accuracy > best_accuracy:
                 best_accuracy = avg_accuracy
                 best_tree_numbers = tree_numbers
                 user.set_forest(forest)
@@ -66,7 +58,6 @@ def predict_with_forest(users: list[User], users_number: int = None):
 
 
 def calculate_accuracy(predictions, true_ratings):
-    # Compare predictions with true ratings and calculate the accuracy
     correct_predictions = sum([1 for pred, true in zip(predictions, true_ratings) if pred == true])
     accuracy = correct_predictions / len(true_ratings)
     return accuracy

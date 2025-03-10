@@ -1,7 +1,6 @@
 from collections import Counter
 import numpy as np
 import matplotlib.pyplot as plt
-import networkx as nx
 
 from typing import Optional, Tuple
 
@@ -12,15 +11,14 @@ class DecisionTree:
 
         self.max_depth = max_depth
         self.min_samples_split = min_samples_split
-        self.max_features = max_features  # Subsampling features
+        self.max_features = max_features
         self.root = None
-        self.n_features = None  # Tracks total number of features in the dataset
+        self.n_features = None
 
     def fit(self, X: np.ndarray, y: np.ndarray):
 
         self.n_features = X.shape[1]
 
-        # Validate max_features
         if self.max_features and self.max_features > self.n_features:
             raise ValueError(
                 f"`max_features` ({self.max_features}) cannot be greater than the total number of features ({self.n_features})."
@@ -29,7 +27,6 @@ class DecisionTree:
         self.root = self._build_tree(X, y, depth=0)
 
     def predict(self, X: np.ndarray) -> np.ndarray:
-        # Ensure X is 2D
         if X.ndim == 1:
             X = X.reshape(1, -1)
         return np.array([self._traverse_tree(x, self.root) for x in X])
@@ -38,12 +35,10 @@ class DecisionTree:
 
         num_samples, num_features = X.shape
 
-        # Stopping criteria
         if depth >= self.max_depth or num_samples < self.min_samples_split or len(np.unique(y)) == 1:
             leaf_value = self._calculate_leaf_value(y)
             return TreeNode(value=leaf_value)
 
-        # Select a subset of features if max_features is specified
         if self.max_features:
             feature_indices = np.random.choice(self.n_features, self.max_features, replace=False)
         else:
@@ -54,13 +49,11 @@ class DecisionTree:
             leaf_value = self._calculate_leaf_value(y)
             return TreeNode(value=leaf_value)
 
-        # Split data into left and right subsets
         left_indices = X[:, best_feature] <= best_threshold
         right_indices = X[:, best_feature] > best_threshold
         left_child = self._build_tree(X[left_indices], y[left_indices], depth + 1)
         right_child = self._build_tree(X[right_indices], y[right_indices], depth + 1)
 
-        # Return the node
         return TreeNode(feature=best_feature, threshold=best_threshold, left=left_child, right=right_child)
 
     def _find_best_split(self, X: np.ndarray, y: np.ndarray, feature_indices: np.ndarray) -> Tuple[Optional[int], Optional[float]]:
@@ -99,7 +92,7 @@ class DecisionTree:
 
     def _calculate_leaf_value(self, y: np.ndarray) -> float:
         counter = Counter(y)
-        return counter.most_common(1)[0][0]  # Mode (most frequent rating)
+        return counter.most_common(1)[0][0]
 
     def _traverse_tree(self, x: np.ndarray, node: TreeNode) -> float:
         if node.is_leaf_node():
@@ -124,30 +117,24 @@ class DecisionTree:
             print("The tree has not been trained yet.")
             return
 
-        # Initialize figure
         fig, ax = plt.subplots(figsize=(12, 8))
         ax.axis("off")
 
-        # Draw the tree recursively
         self._draw_tree(ax, self.root, 0.5, 1, 0.25, depth=0)
         plt.show()
 
     def _draw_tree(self, ax, node, x, y, x_offset, depth):
-        # Draw node
         if node.is_leaf_node():
             ax.text(x, y, f"Leaf\n{node.value}", fontsize=10, ha="center", bbox=dict(facecolor="lightgreen", edgecolor="black", boxstyle="round,pad=0.3"))
         else:
             ax.text(x, y, f"X{node.feature} ≤ {node.threshold:.2f}", fontsize=10, ha="center", bbox=dict(facecolor="lightblue", edgecolor="black", boxstyle="round,pad=0.3"))
 
-            # Draw branches and recurse for children
             left_x = x - x_offset
             right_x = x + x_offset
             next_y = y - 0.1
 
-            # Draw edges
             ax.plot([x, left_x], [y - 0.02, next_y + 0.02], "k-", lw=1)
             ax.plot([x, right_x], [y - 0.02, next_y + 0.02], "k-", lw=1)
 
-            # Recurse for left and right children
             self._draw_tree(ax, node.left, left_x, next_y, x_offset / 2, depth + 1)
             self._draw_tree(ax, node.right, right_x, next_y, x_offset / 2, depth + 1)

@@ -5,9 +5,6 @@ from knn_ph_version.class_models.movie_feature_type import MovieFeatureType
 
 
 def compute_similarity(a: np.ndarray, b: np.ndarray, feature_types: List[Tuple[str, MovieFeatureType]]) -> float:
-    """
-    Computes the similarity between two feature vectors based on feature types.
-    """
     similarities = []
     index = 0
 
@@ -30,17 +27,11 @@ def compute_similarity(a: np.ndarray, b: np.ndarray, feature_types: List[Tuple[s
     return sum(similarities) / len(similarities)
 
 def categorical_similarity(a: np.ndarray, b: np.ndarray) -> float:
-    """
-    Computes the Jaccard similarity between two categorical vectors.
-    """
     intersection = np.sum(np.minimum(a, b))
     union = np.sum(np.maximum(a, b))
     return intersection / union if union != 0 else 0
 
 def numerical_similarity(a: float, b: float, max_range: float = 1.0) -> float:
-    """
-    Computes the similarity between two numerical values using Euclidean distance.
-    """
     distance = abs(a - b)
     similarity = 1 - (distance / max_range)
     return max(0, min(1, similarity))
